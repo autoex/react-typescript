@@ -14,6 +14,16 @@ const App: React.FC = () => {
         }]);
         setValue('')
     };
+    const removeTodo =(id:number):void => {
+        setTodos(todos.filter(todo=> todo.id !== id))
+
+    };
+    const toggleTodo =(id:number):void=> {
+        setTodos(todos.map(todo=>{
+            if(todo.id === id) return {...todo, complete: !todo.complete}
+            return todo
+        }))
+    }
     const inputRef = useRef<HTMLInputElement >(null);
     useEffect(()=> {
         if (inputRef.current) inputRef.current.focus()
@@ -21,16 +31,22 @@ const App: React.FC = () => {
     const valueHandler: React.ChangeEventHandler<HTMLInputElement> = (e) => {
         setValue(e.target.value)
     }
+    const keyDownHandler: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
+        if(e.key === 'Enter') addTodo()
+    }
     return (
         <div>
             <div>
                 <input type="text"
+                       onKeyDown={keyDownHandler}
                        value={value}
                        onChange={valueHandler}
                        ref={inputRef}/>
                 <button onClick={addTodo}>Add</button>
             </div>
-            <Todos items={todos}/>
+            <Todos items={todos}
+                   toggleTodo={toggleTodo}
+                   removeTodo={removeTodo}/>
         </div>
     );
 };
